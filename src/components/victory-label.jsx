@@ -33,7 +33,8 @@ export default class VictoryLabel extends React.Component {
      */
     children: PropTypes.oneOfType([ // TODO: Expand child support in future release
       PropTypes.string,
-      PropTypes.number
+      PropTypes.number,
+      PropTypes.node
     ]),
     /**
      * The lineHeight prop defines how much space a single line of text should
@@ -115,8 +116,7 @@ export default class VictoryLabel extends React.Component {
   render() {
     const style = this.getStyles();
     const transform = Util.Style.toTransformString(this.props.transform);
-    const content = `${this.props.children}` || "";
-    const lines = content.split("\n");
+    const content = this.props.children || "";
 
     let lineHeight = this.props.lineHeight;
     if (typeof lineHeight === "number") {
@@ -128,36 +128,13 @@ export default class VictoryLabel extends React.Component {
       capHeight = `${capHeight}em`;
     }
 
-    let dy = this.props.dy;
-    switch (this.props.verticalAnchor) {
-    case "end":
-      dy = Util.Style.calc(
-        `${dy} + ${capHeight} / 2 + (0.5 - ${lines.length}) * ${lineHeight}`
-      );
-      break;
-    case "middle":
-      dy = Util.Style.calc(
-        `${dy} + ${capHeight} / 2 + (0.5 - ${lines.length} / 2) * ${lineHeight}`
-      );
-      break;
-    default:
-      dy = Util.Style.calc(`${dy} + ${capHeight} / 2 + ${lineHeight} / 2`);
-    }
-
-
     return (
-      <text x={this.props.x} y={this.props.y} dy={dy}
+      <text x={this.props.x} y={this.props.y}
         textAnchor={this.props.textAnchor}
         transform={transform}
         style={style}
       >
-        {lines.map((line, i) => {
-          return (
-            <tspan key={i} x={this.props.x} dy={i ? lineHeight : undefined}>
-              {line}
-            </tspan>
-          );
-        })}
+        {content}
       </text>
     );
   }
